@@ -1,0 +1,5 @@
+{
+  "name": "KernelOptic AI",
+  "description": "A high-performance GPU kernel optimizer and profiler with agentic AI integration. Achieve SOTA kernel performance through automated memory coalescing, shared memory optimization, and occupancy analysis.",
+  "requestFramePermissions": []
+}
