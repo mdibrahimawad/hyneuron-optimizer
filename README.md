@@ -347,8 +347,3 @@ Good first areas to work on:
 
 Keep changes small, typed, and easy to review.
 
-## License
-
-No license file is included yet.
-
-Add a license before publishing this as an open-source project or accepting outside contributions.
