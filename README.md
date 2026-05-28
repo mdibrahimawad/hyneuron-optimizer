@@ -1,51 +1,51 @@
-# HyNeuron IDE
+# KernelOptic AI
 
-A visual neural-network workspace for building model graphs, generating PyTorch, and reasoning about GPU performance from the same interface.
+A GPU kernel optimization workbench for CUDA code, profiler telemetry, and AI-assisted performance analysis.
 
-HyNeuron is a browser IDE for people who think about deep learning like systems code. Drag layers onto the graph, wire the model, inspect generated PyTorch, ask the optimization agent for kernel-level improvements, and view an Nsight Compute-inspired profiler panel.
+KernelOptic AI is a browser-based interface for exploring GPU optimization ideas. Pick a kernel, generate the baseline, inspect the code, run the optimization pass, accept the diff, and compare before and after performance metrics in a profiler-style dashboard.
 
-Open the graph. Read the code. Tune the system.
+Built for people who care about memory traffic, occupancy, SM utilization, register pressure, and the gap between naive code and fast code.
 
-## What it does
+Open the kernel. Read the diff. Check the telemetry.
 
-HyNeuron brings four workflows into one screen:
+## What is inside
 
-- Visual model design
-- PyTorch code generation
-- AI-assisted optimization
-- Profiler-style performance inspection
+KernelOptic AI combines three pieces into one workspace:
 
-The current app is a Vite, React, and TypeScript front end. It ships with a live visual graph editor, generated PyTorch output, a Gemini-powered optimization agent, and mock NVIDIA profiler data for the performance view.
+- A CUDA-focused code editor
+- An optimization assistant
+- A GPU profiler view
+
+The current app is a Vite, React, and TypeScript front end. It includes built-in demo kernels, generated optimization diffs, mock benchmark metrics, syntax highlighting, and Gemini-powered chat helpers.
 
 ## Features
 
-- Visual graph editor with draggable nodes
-- Drag and drop layer creation from the component toolbox
-- Multi-node selection with marquee select
-- Node connection UI with curved SVG edges
-- Live graph to PyTorch code generation
-- Code to graph sync through Gemini structured JSON output
-- Optimization chat panel for model and kernel suggestions
-- Nsight Compute-inspired profiler screen
-- Mock B200 GPU metrics and kernel table
-- Light and dark mode
-- Brutalist black and white interface
-- Tailwind-powered layout through the CDN
-- React 19 and TypeScript project structure
+- CUDA kernel workspace
+- Animated baseline code generation
+- Built-in demo kernels
+- Optimization diff view
+- Accept optimized code flow
+- AI assistant panel
+- Gemini chat integration
+- GPU profiler dashboard
+- Before and after metric comparison
+- Recharts-based performance charts
+- Radar chart for architecture deltas
+- Terminal-style compiler stream
+- Dark technical UI
+- Vite development setup
 
-## Current layer support
+## Demo kernels
 
-The UI includes a broad toolbox of neural-network components. The code generator currently emits concrete PyTorch for the core layers below.
+KernelOptic ships with three demo workloads.
 
-| Layer | Generated PyTorch |
-| --- | --- |
-| `Conv2D` | `nn.Conv2d(...)` |
-| `Linear` | `nn.Linear(...)` |
-| `ReLU` | `nn.ReLU()` |
-| `MaxPool2D` | `nn.MaxPool2d(...)` |
-| `Flatten` | `nn.Flatten(...)` |
+| Kernel | Baseline issue | Optimization idea |
+| --- | --- | --- |
+| Matrix multiplication | Global memory reloads and low arithmetic intensity | Shared memory tiling |
+| Parallel reduction | Modulo branching and warp divergence | Shared memory reduction and warp-level unroll |
+| FlashAttention-style attention | Materialized score matrix and heavy HBM traffic | Blocked online softmax style flow |
 
-Other toolbox items are present as interface components or experimental placeholders. They render in the graph, but the current generator writes comments for unsupported node types until full codegen support is added.
+These demos are stored in `constants.tsx`.
 
 ## Tech stack
 
@@ -53,8 +53,9 @@ Other toolbox items are present as interface components or experimental placehol
 - TypeScript
 - Vite
 - Tailwind CSS through CDN
-- Google Gemini API through `@google/genai`
-- lucide-react icons
+- Recharts
+- lucide-react
+- Google Gemini through `@google/genai`
 
 ## Getting started
 
@@ -62,15 +63,22 @@ Other toolbox items are present as interface components or experimental placehol
 
 You need Node.js and npm installed.
 
+Recommended:
+
+```bash
+node --version
+npm --version
+```
+
 ### Install
 
 ```bash
-git clone https://github.com/<your-username>/hyneuron.git
-cd hyneuron
+git clone https://github.com/<your-username>/kerneloptic-ai.git
+cd kerneloptic-ai
 npm install
 ```
 
-### Configure Gemini
+### Configure environment
 
 Create a local environment file:
 
@@ -80,15 +88,17 @@ GEMINI_API_KEY=your_gemini_api_key_here
 EOF
 ```
 
-The visual editor and generated code view can be explored without using Gemini calls. The optimization chat and code to graph sync require `GEMINI_API_KEY`.
+The demo kernels, editor, optimization diff, and profiler UI can be explored without calling Gemini.
 
-### Run the app
+The assistant chat requires `GEMINI_API_KEY`.
+
+### Run
 
 ```bash
 npm run dev
 ```
 
-The dev server is configured to run on port `3000`.
+The Vite server is configured for port `3000`.
 
 Open:
 
@@ -100,23 +110,28 @@ http://localhost:3000
 
 | Command | Description |
 | --- | --- |
-| `npm run dev` | Start the local Vite development server |
+| `npm run dev` | Start the Vite development server |
 | `npm run build` | Build the production app |
-| `npm run preview` | Preview the production build locally |
+| `npm run preview` | Preview the production build |
 
 ## Environment variables
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `GEMINI_API_KEY` | Yes for AI features | Used by the Gemini service for optimization and code to graph conversion |
+| `GEMINI_API_KEY` | Required for AI chat | Used by the Gemini service |
 
-Vite maps `GEMINI_API_KEY` into the client runtime as both `process.env.API_KEY` and `process.env.GEMINI_API_KEY`.
+The Vite config maps `GEMINI_API_KEY` into the client as:
+
+```ts
+process.env.API_KEY
+process.env.GEMINI_API_KEY
+```
 
 ## Security note
 
-This is a client-side Vite app. Any key injected into the front end can be visible to users in a production deployment.
+This is a client-side app.
 
-For a public deployment, do not expose a private Gemini API key directly in the browser. Put Gemini calls behind a small server API, serverless function, or backend proxy.
+Any API key exposed to the Vite client can be visible in the browser bundle. For a public deployment, move Gemini calls behind a backend route, serverless function, or private API proxy.
 
 ## Project structure
 
@@ -124,8 +139,8 @@ For a public deployment, do not expose a private Gemini API key directly in the 
 .
 ├── App.tsx
 ├── components
-│   ├── NCUProfiler.tsx
-│   └── VisualGraph.tsx
+│   ├── Editor.tsx
+│   └── Profiler.tsx
 ├── constants.tsx
 ├── index.html
 ├── index.tsx
@@ -138,212 +153,314 @@ For a public deployment, do not expose a private Gemini API key directly in the 
 └── vite.config.ts
 ```
 
-## Architecture
+## How it works
 
 ### App shell
 
-`App.tsx` owns the main application state:
+`App.tsx` owns the main workspace state.
+
+It tracks:
 
 - active tab
-- graph nodes
-- generated code
-- optimization chat messages
-- dark mode
-- selected node state
+- selected demo kernel
+- current code
+- generated diff state
+- optimization state
+- terminal output
+- chat messages
+- user input
 
-It renders the left component toolbox, the center workspace, the top navigation, the footer telemetry strip, and the right optimization agent panel.
+The app has two primary views:
 
-### Visual graph
+- `editor`
+- `profiler`
 
-`components/VisualGraph.tsx` handles the graph workspace.
+The editor is shown by default. The profiler appears when a demo case is selected and the profiler tab is opened.
 
-It supports:
+### Demo case flow
 
-- dragging nodes
-- selecting nodes
-- moving selected groups
-- drawing selection boxes
-- connecting nodes through input and output ports
-- removing nodes
-- rendering SVG edge paths between connected nodes
+Each demo case contains:
 
-Graph data is stored as an array of `DLNode` objects.
+- baseline code
+- optimized code
+- diff code
+- explanation
+- baseline metrics
+- optimized metrics
+- source labels
 
-```ts
-interface DLNode {
-  id: string;
-  type: NodeType;
-  position: {
-    x: number;
-    y: number;
-  };
-  params: Record<string, string | number>;
-  inputs: string[];
-}
-```
+When a user selects a kernel, KernelOptic resets the workspace, prints terminal messages, and animates the baseline code into the editor.
 
-### Code generation
+When the user runs optimize, the app prints an optimization stream, animates a diff, and enables the accept flow.
 
-`services/geminiService.ts` contains `blocksToCode`.
+When the user accepts the diff, the editor switches to the optimized version.
 
-It turns the current graph into a PyTorch `nn.Module`:
+### Editor
 
-```python
-import torch
-import torch.nn as nn
+`components/Editor.tsx` renders the code surface.
 
-class Model(nn.Module):
-    def __init__(self):
-        super().__init__()
+It uses a transparent textarea layered above a highlighted code view. The textarea keeps the editing and scrolling behavior native, while the visual layer handles syntax color, line numbers, and diff styling.
 
-    def forward(self, x):
-        return x
-```
+Supported highlighting includes:
 
-The generated code updates automatically from graph state with a short debounce, so dragging stays responsive.
-
-### AI optimization
-
-The right panel acts as an optimization agent.
-
-When a message includes `optimize`, HyNeuron sends the current PyTorch code to Gemini with instructions focused on:
-
-- kernel fusion
-- parallelism efficiency
-- memory throughput
-- Tensor Core utilization
-- NVIDIA B200-style optimization targets
-
-The returned text is displayed as an optimization patch in the chat.
-
-### Code to graph sync
-
-The `SYNC_GRAPH` action sends the current code to Gemini and asks for a structured JSON list of visual nodes.
-
-Expected node fields:
-
-```ts
-{
-  id: string;
-  type: string;
-  params: object;
-  inputs: string[];
-  position?: {
-    x: number;
-    y: number;
-  };
-}
-```
-
-If Gemini returns valid nodes, the visual graph updates.
+- CUDA keywords
+- C and C++ keywords
+- Python and Triton keywords
+- numbers
+- comments
+- types
+- added diff lines
+- removed diff lines
 
 ### Profiler
 
-`components/NCUProfiler.tsx` renders a profiler-style dashboard from `MOCK_NCU_REPORT` in `constants.tsx`.
+`components/Profiler.tsx` renders the GPU performance dashboard.
 
-It includes:
+It displays:
 
-- kernel execution table
-- selected kernel display
-- hardware metric cards
-- throughput bars
-- optimization alert panel
-- mock export controls
+- benchmark summary
+- detailed memory and execution metrics
+- latency card
+- throughput card
+- SM utilization card
+- occupancy card
+- architecture delta radar
+- resource delta panel
+- memory traffic status
+- net performance gain
 
-The current profiler is a UI and data visualization layer. It does not yet parse real `.ncu-rep`, CSV, or XLSX profiler exports.
+The profiler uses `ProfileMetrics` from `types.ts`.
 
-## Design direction
+### Gemini service
 
-HyNeuron uses a sharp, technical visual style:
+`services/geminiService.ts` creates the Gemini client.
 
-- black and white panels
-- hard borders
-- square shadows
-- uppercase labels
-- dense telemetry-style text
-- monospace code and metric output
-- dark mode inversion
+It includes two functions:
 
-The goal is to feel closer to a systems dashboard than a typical low-code builder.
+```ts
+optimizeKernel(code)
+agentChat(history, message)
+```
+
+`optimizeKernel` asks Gemini for a structured JSON optimization response.
+
+`agentChat` sends chat messages to the assistant model with a GPU optimization system instruction.
+
+Current UI behavior mostly uses the built-in demo optimization flow. The chat fallback calls Gemini for general technical questions.
+
+## Data model
+
+The main metric type is:
+
+```ts
+interface ProfileMetrics {
+  latency: number;
+  throughput: number;
+  throughputUnit?: 'GFLOPs' | 'TFLOPs' | 'GB/s';
+  occupancy: number;
+  registerPressure: number;
+  smUtilization: number;
+  speedup?: string;
+  l2HitRate?: number;
+  dramTraffic?: string;
+  memoryReadsGB?: number;
+  memoryWritesGB?: number;
+  dramBandwidthGBs?: number;
+  registersPerThread?: number;
+  warpExecEfficiency?: number;
+  branchEfficiency?: number;
+  bankConflicts?: number;
+  intermediateTensorMB?: number;
+  execSpeedup?: number;
+  memoryTrafficReduction?: number;
+  computeEfficiencyGain?: number;
+}
+```
+
+Each demo case follows this shape:
+
+```ts
+interface DemoCase {
+  id: string;
+  name: string;
+  baselineCode: string;
+  optimizedCode: string;
+  diffCode: string;
+  explanation: string;
+  baselineMetrics: ProfileMetrics;
+  optimizedMetrics: ProfileMetrics;
+  sources: {
+    code: string;
+    optimized: string;
+    benchmarks: string;
+  };
+}
+```
+
+## Current demos
+
+### Matrix multiplication
+
+The baseline GEMM reads from global memory repeatedly inside the inner loop.
+
+The optimized version introduces shared memory tiles for A and B, syncs threads around tile loading, and reuses tile data across multiply operations.
+
+Reported demo metrics:
+
+| Metric | Baseline | Optimized |
+| --- | --- | --- |
+| Latency | 46.8 ms | 4.3 ms |
+| Throughput | 215 GFLOPs | 2.85 TFLOPs |
+| Occupancy | 41% | 76% |
+| SM utilization | 44% | 81% |
+| Speedup | 1.0x | 10.9x |
+
+### Parallel reduction
+
+The baseline reduction uses modulo branching at each stride.
+
+The optimized version uses shared memory, fewer divergent branches, and a warp-level final reduction.
+
+Reported demo metrics:
+
+| Metric | Baseline | Optimized |
+| --- | --- | --- |
+| Latency | 1.21 ms | 0.082 ms |
+| Throughput | 13.2 GB/s | 194 GB/s |
+| Occupancy | 32% | 69% |
+| SM utilization | 54% | 96% |
+| Speedup | 1.0x | 14.8x |
+
+### FlashAttention-style attention
+
+The baseline attention flow materializes the full score matrix.
+
+The optimized version uses a blocked flow with online softmax-style state to avoid storing the full intermediate matrix.
+
+Reported demo metrics:
+
+| Metric | Baseline | Optimized |
+| --- | --- | --- |
+| Latency | 12.6 ms | 1.9 ms |
+| Throughput | 0.91 TFLOPs | 5.8 TFLOPs |
+| Occupancy | 37% | 74% |
+| SM utilization | 37% | 74% |
+| Speedup | 1.0x | 6.6x |
+
+## UI model
+
+KernelOptic is designed like a systems tool, not a generic dashboard.
+
+The interface uses:
+
+- dark panels
+- thin borders
+- compact labels
+- monospace output
+- terminal-style status lines
+- dense profiler cards
+- high contrast code blocks
+- technical naming
+
+The main interaction is intentionally simple:
+
+```text
+select kernel
+generate baseline
+optimize
+review diff
+accept
+bench
+```
 
 ## Known limitations
 
-- The profiler data is currently mock data.
-- `RUN_INSTRUMENT`, `DEPLOY_CORE`, `EXPORT_CSV`, and `RAW_XLSX` are interface controls and are not wired to a backend yet.
-- Code generation uses a simple node order and does not fully topologically sort the graph.
-- Unsupported layer types are rendered as comments in generated code.
-- The Gemini API key is exposed in the client build unless moved behind a backend.
-- Graph persistence is not implemented yet.
-- Parameter editing UI is not fully wired yet.
+- The profiler metrics are demo data.
+- The app does not compile or run real CUDA kernels yet.
+- The benchmark output is not connected to Nsight Compute.
+- The optimization diff is generated from built-in demo data.
+- `optimizeKernel` exists, but the main optimize button currently uses local demo diffs.
+- No backend is included.
+- Gemini calls are made from the client.
+- API key proxying is not implemented.
+- Kernel files are not saved to disk.
+- No graph or project persistence is included.
+- The editor is lightweight and does not use Monaco or CodeMirror.
 
 ## Roadmap
 
-- Save and load graph JSON
-- Export generated PyTorch files
-- Add a real node parameter inspector
-- Add full topological graph sorting
-- Add codegen support for attention, recurrent, normalization, dropout, and embedding layers
-- Add a backend execution runner
-- Add real Nsight Compute CSV or XLSX ingestion
-- Add graph import and export
-- Add project templates for CNNs, transformers, and MLPs
-- Add a secure server-side Gemini proxy
-- Add tests for graph operations and code generation
+- Add real kernel upload
+- Add CUDA compile and run backend
+- Add Nsight Compute report ingestion
+- Add real benchmark execution
+- Wire `optimizeKernel` into the main optimization flow
+- Add diff accept and reject controls
+- Add file export
+- Add project persistence
+- Add kernel templates
+- Add profiler import from CSV
+- Add server-side Gemini proxy
+- Add tests for demo case flow
+- Add CI build workflow
 
-## Development notes
+## Development
 
-Before building, make sure the JSX does not contain duplicate props.
-
-There is currently a duplicated `onMouseDown` prop in `components/VisualGraph.tsx` on the output port button. Remove the first duplicate handler and keep the handler that starts the connection drag.
-
-After that, run:
+Install dependencies:
 
 ```bash
 npm install
-npm run build
 ```
 
-## Deployment
+Start the app:
 
-Build the app:
+```bash
+npm run dev
+```
+
+Build for production:
 
 ```bash
 npm run build
 ```
 
-Preview the production build:
+Preview production output:
 
 ```bash
 npm run preview
 ```
 
-For platforms like Vercel, Netlify, or Cloudflare Pages, set the build command to:
+## Deployment
+
+Build command:
 
 ```bash
 npm run build
 ```
 
-Set the output directory to:
+Output directory:
 
 ```text
 dist
 ```
 
-Add `GEMINI_API_KEY` in the platform environment settings only for private demos or protected deployments. For public deployments, use a backend proxy instead.
+For Vercel, Netlify, Cloudflare Pages, or similar platforms, set the build command to `npm run build` and the publish directory to `dist`.
+
+For public deployments, do not expose a private Gemini key directly in the browser. Use a backend proxy.
 
 ## Contributing
 
 Pull requests are welcome.
 
-Good first areas to work on:
+Good areas to work on:
 
-- layer code generation
-- graph persistence
-- profiler import support
-- backend execution
-- API key proxying
-- UI polish
+- real kernel execution
+- profiler import
+- backend API
+- secure Gemini proxy
+- editor improvements
+- demo expansion
 - test coverage
+- deployment setup
 
-Keep changes small, typed, and easy to review.
+Keep changes focused, typed, and easy to review.
 
